@@ -1,0 +1,120 @@
+
+{
+  "info": {
+    "name": "Book Inventory Management API",
+    "description": "Postman collection for testing the Book Inventory Management API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Book",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Python Basics\",\n  \"author\": \"John Miller\",\n  \"isbn\": \"9781234567899\",\n  \"published_date\": \"2022-05-10\",\n  \"genre\": \"Programming\",\n  \"price\": 499,\n  \"copies_available\": 10\n}"
+        },
+        "url": "{{base_url}}/books"
+      }
+    },
+    {
+      "name": "Get Book by ID",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/books/1"
+      }
+    },
+    {
+      "name": "Update Book",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Python Basics - Second Edition\",\n  \"author\": \"John Miller\",\n  \"isbn\": \"9781234567899\",\n  \"published_date\": \"2022-05-10\",\n  \"genre\": \"Programming\",\n  \"price\": 549,\n  \"copies_available\": 8\n}"
+        },
+        "url": "{{base_url}}/books/1"
+      }
+    },
+    {
+      "name": "Delete Book",
+      "request": {
+        "method": "DELETE",
+        "url": "{{base_url}}/books/1"
+      }
+    },
+    {
+      "name": "List/Search Books",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/books?author=John&min_price=400&max_price=800&genre=Programming&page=1&limit=10",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "books"
+          ],
+          "query": [
+            {
+              "key": "author",
+              "value": "John"
+            },
+            {
+              "key": "min_price",
+              "value": "400"
+            },
+            {
+              "key": "max_price",
+              "value": "800"
+            },
+            {
+              "key": "genre",
+              "value": "Programming"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Sell Book",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/books/1/sell"
+      }
+    },
+    {
+      "name": "Total Revenue",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/books/revenue"
+      }
+    }
+  ]
+}
+
