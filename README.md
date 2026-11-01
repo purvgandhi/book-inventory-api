@@ -1,120 +1,115 @@
-# Book Inventory Management API
+# Book Inventory Management REST API
 
-A REST API built using FastAPI to manage a book inventory. It allows users to create, update, delete, search, and sell books while tracking total revenue.
+<p align="center">
+  <img src="https://img.shields.io/badge/Language-Python%203.11%20%7C%203.12-blue?style=flat-square&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Framework-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/ORM-SQLAlchemy%202.0-red?style=flat-square&logo=sqlalchemy&logoColor=white" alt="SQLAlchemy" />
+  <img src="https://img.shields.io/badge/Validation-Pydantic%20v2-e92063?style=flat-square&logo=pydantic&logoColor=white" alt="Pydantic" />
+  <img src="https://img.shields.io/badge/Testing-Pytest-yellow?style=flat-square&logo=pytest&logoColor=white" alt="Pytest" />
+</p>
 
-## Tech Stack
+## 📌 Project Overview
 
-- Python 3.12
-- FastAPI
-- SQLAlchemy
-- SQLite
-- Pydantic v2
-- Pytest
+A production-pattern REST API engineered with **FastAPI**, **SQLAlchemy 2.0**, and **Pydantic v2** for managing enterprise bookstore and inventory operations. It features atomic transaction handling, real-time sales accounting, parameterized catalog search, and automated test coverage.
 
-## Project Structure
+---
+
+## 🎯 Key Features
+
+- **CRUD Operations:** Complete lifecycle management for books (Title, Author, ISBN, Price, Stock).
+- **Atomic Sales Transactions:** Atomic decrement of stock inventory with instant revenue calculation.
+- **Catalog Search & Filtering:** Dynamic query filtering by author, genre, price range, and availability.
+- **Pydantic v2 Data Integrity:** Strict request/response validation schemas preventing invalid data ingress.
+- **Interactive Documentation:** Auto-generated Swagger UI (`/docs`) and ReDoc (`/redoc`) API specifications.
+- **Comprehensive Test Suite:** Fully automated unit and integration tests using Pytest and HTTPX.
+
+---
+
+## 🏗️ Architecture & Data Model
+
+```mermaid
+flowchart LR
+    Client["Client / API Consumer"] -->|JSON HTTP Request| FastAPI["FastAPI Controller Layer"]
+    FastAPI -->|Validate Schema| Pydantic["Pydantic v2 Schemas"]
+    Pydantic -->|Type Checked| Service["Business Logic & Service Layer"]
+    Service -->|Session Transaction| SQLAlchemy["SQLAlchemy 2.0 ORM"]
+    SQLAlchemy -->|Atomic Query| DB[("SQLite / PostgreSQL Database")]
+```
+
+---
+
+## 🛠️ Verified Technology Stack
+
+| Technology | Version | Purpose |
+|---|---|---|
+| **Python** | 3.11 / 3.12 | Primary execution runtime |
+| **FastAPI** | 0.138.0 | High-performance asynchronous API framework |
+| **Uvicorn** | 0.49.0 | ASGI web server implementation |
+| **SQLAlchemy** | 2.0.51 | Modern Object Relational Mapper (ORM) |
+| **Pydantic** | 2.13.4 | Data parsing, type enforcement, and serialization |
+| **Pytest** | 9.1.1 | Automated unit and integration testing harness |
+| **HTTPX** | 0.28.1 | Asynchronous HTTP client for test requests |
+
+---
+
+## 📁 Repository Structure
 
 ```
-book_inv/
+book-inventory-api/
 ├── app/
-│   ├── main.py
-│   ├── database.py
-│   ├── models.py
-│   ├── schemas.py
-│   └── crud.py
+│   ├── __init__.py           # Package initializer
+│   ├── database.py           # Engine setup and SessionLocal factory
+│   ├── models.py             # SQLAlchemy ORM declarative models
+│   ├── schemas.py            # Pydantic v2 validation schemas
+│   ├── crud.py               # Database query and mutation operations
+│   └── main.py               # FastAPI application routes and handlers
 ├── tests/
-├── requirements.txt
-├── README.md
-└── ...
+│   ├── __init__.py
+│   └── test_api.py           # Pytest API contract and endpoint tests
+├── curl_examples.md          # Copy-pasteable cURL commands
+├── postman_collection.json   # Ready-to-import Postman API collection
+├── seed_data.py              # Database seeding utility
+├── requirements.txt          # Pinned runtime dependencies
+├── .env.example              # Environment variables template
+└── README.md                 # Project documentation
 ```
 
-## Setup
+---
 
-### 1. Create a virtual environment
+## 🚀 Getting Started
 
-**Windows**
-
+### 1. Installation
 ```bash
+git clone https://github.com/purvgandhi/book-inventory-api.git
+cd book-inventory-api
+
 python -m venv venv
-venv\Scripts\activate
-```
-
-**Linux/macOS**
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 2. Install dependencies
-
-```bash
+source venv/bin/activate  # On Windows: .env\Scriptsctivate
 pip install -r requirements.txt
 ```
 
-### 3. Run the application
-
+### 2. Database Initialization & Seeding
 ```bash
-uvicorn app.main:app --reload
+python seed_data.py
 ```
 
-The API will be available at:
-
-- API: http://127.0.0.1:8000
-- Swagger UI: http://127.0.0.1:8000/docs
-
-## Running Tests
-
+### 3. Run the Development Server
 ```bash
-pytest
+uvicorn app.main:app --reload --port 8000
+```
+Open **http://127.0.0.1:8000/docs** in your browser to interact with the live Swagger documentation.
+
+---
+
+## 🧪 Testing
+Run the automated test suite with Pytest:
+```bash
+pytest -v
 ```
 
-## API Endpoints
+---
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Health check |
-| POST | `/books` | Create a new book |
-| GET | `/books` | List/Search books |
-| GET | `/books/revenue` | Get total revenue |
-| GET | `/books/{id}` | Get a book by ID |
-| PUT | `/books/{id}` | Update a book |
-| DELETE | `/books/{id}` | Delete a book |
-| POST | `/books/{id}/sell` | Sell one copy of a book |
-
-## Query Parameters
-
-`GET /books` supports the following filters:
-
-| Parameter | Description |
-|-----------|-------------|
-| `title` | Filter by title |
-| `author` | Filter by author |
-| `genre` | Filter by genre |
-| `min_price` | Minimum price |
-| `max_price` | Maximum price |
-| `page` | Page number |
-| `limit` | Number of records per page |
-
-## Validation Rules
-
-- Title and author cannot be empty.
-- Genre cannot be empty.
-- ISBN must be a valid ISBN-10 or ISBN-13.
-- Published date cannot be in the future.
-- Price must be greater than zero.
-- Copies available cannot be negative.
-
-## Error Responses
-
-| Status Code | Description |
-|-------------|-------------|
-| 400 | Bad Request |
-| 404 | Book Not Found |
-| 409 | Duplicate ISBN |
-| 500 | Internal Server Error |
-
-## API Documentation
-
-Interactive API documentation is available through Swagger UI:
-
-http://127.0.0.1:8000/docs
+## 👨‍💻 Author & Contact
+- **Author:** [Purv Gandhi](https://github.com/purvgandhi)
+- **LinkedIn:** [linkedin.com/in/purv-gandhi-17989330a](https://www.linkedin.com/in/purv-gandhi-17989330a/)
+- **Email:** [gandhipurv2006@gmail.com](mailto:gandhipurv2006@gmail.com)
